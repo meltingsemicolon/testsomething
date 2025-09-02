@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxEase Nepal - AI-Powered Tax Assistant</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* App.css */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            color: #4361ee;
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            color: #4a5568;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .calculator-container, .result-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            background: #4361ee;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            background: #3a56d4;
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            color: #4361ee;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tax-amount {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .breakdown {
+            margin-top: 20px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .feature {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: #4361ee;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #718096;
+        }
+        
+        .disclaimer {
+            background: #fff9db;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #e67700;
+        }
+        
+        /* Chatbot.css */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .chatbot-header {
+            background: #4361ee;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        
+        .chatbot-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .chatbot-title {
+            display: flex;
+            align-items: center;
+        }
+        
+        .chatbot-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .chatbot-body {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease;
+        }
+        
+        .chatbot-body.open {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .bot-message {
+            justify-content: flex-start;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 15px;
+            border-radius: 18px;
+        }
+        
+        .bot-message .message-content {
+            background: white;
+            border-top-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-message .message-content {
+            background: #4361ee;
+            color: white;
+            border-top-right-radius: 5px;
+        }
+        
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .chatbot-input button {
+            background: #4361ee;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .suggested-questions {
+            padding: 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .suggested-questions h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+        
+        .question-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .question-chip {
+            background: white;
+            border: 1px solid #cbd5e0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .question-chip:hover {
+            background: #4361ee;
+            color: white;
+            border-color: #4361ee;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            padding: 5px;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #a0aec0;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Tax slab data for Nepal (example values - replace with actual rates)
+        const TAX_SLABS = {
+            general: [
+                { min: 0, max: 500000, rate: 0.01 },
+                { min: 500000, max: 700000, rate: 0.10 },
+                { min: 700000, max: 1000000, rate: 0.20 },
+                { min: 1000000, max: 2000000, rate: 0.30 },
+                { min: 2000000, max: Infinity, rate: 0.36 }
+            ],
+            women: [
+                { min: 0, max: 600000, rate: 0.01 },
+                { min: 600000, max: 800000, rate: 0.10 },
+                { min: 800000, max: 1100000, rate: 0.20 },
+                { min: 1100000, max: 2000000, rate: 0.30 },
+                { min: 2000000, max: Infinity, rate: 0.36 }
+            ],
+            senior: [
+                { min: 0, max: 800000, rate: 0.01 },
+                { min: 800000, max: 1000000, rate: 0.10 },
+                { min: 1000000, max: 1500000, rate: 0.20 },
+                { min: 1500000, max: 2500000, rate: 0.30 },
+                { min: 2500000, max: Infinity, rate: 0.36 }
+            ]
+        };
+
+        // Knowledge base for the chatbot - questions and answers
+        const knowledgeBase = [
+            {
+                keywords: ['hello', 'hi', 'hey', 'greetings'],
+                response: 'Hello! I\'m TaxEase Assistant. How can I help with your tax questions today?'
+            },
+            {
+                keywords: ['deadline', 'due date', 'last date', 'when to file'],
+                response: 'The deadline for filing tax returns in Nepal is typically the end of the Nepali month of Kartik (which falls around Mid-October to Mid-November).'
+            },
+            {
+                keywords: ['tax slab', 'tax rate', 'how much tax'],
+                response: 'Nepal uses a progressive tax system. For individuals, the rates are: 1% on first ₹5 lakhs, 10% on next ₹2 lakhs, 20% on next ₹3 lakhs, 30% on next ₹10 lakhs, and 36% above ₹20 lakhs. Women and senior citizens have different slabs.'
+            },
+            {
+                keywords: ['deduction', 'save tax', 'reduce tax'],
+                response: 'You can save tax through various deductions like contributions to PF, CIT, insurance premiums, and certain investments. Our app helps you track these deductions automatically.'
+            },
+            {
+                keywords: ['penalty', 'late filing', 'fine'],
+                response: 'If you file your taxes after the deadline, you may have to pay a penalty of 15% per annum on the due amount. Use our Penalty Simulator to calculate potential fines.'
+            },
+            {
+                keywords: ['document', 'what documents', 'need to file'],
+                response: 'You typically need your citizenship proof, PAN card, income statements, expense receipts, investment proofs, and previous tax documents (if any).'
+            },
+            {
+                keywords: ['business tax', 'company tax', 'corporate'],
+                response: 'Corporate tax rate in Nepal is generally 25% for most businesses. There are different rates for specific industries and small businesses.'
+            },
+            {
+                keywords: ['vat', 'value added tax'],
+                response: 'VAT in Nepal is generally 13% on most goods and services. Some items may be exempt or have different rates.'
+            },
+            {
+                keywords: ['thank', 'thanks', 'thank you'],
+                response: 'You\'re welcome! Feel free to ask if you have more questions about taxes in Nepal.'
+            },
+            {
+                keywords: ['what can you do', 'help', 'features'],
+                response: 'I can help you understand tax deadlines, rates, deductions, penalties, and required documents. The TaxEase app also includes a tax calculator, receipt scanner, and penalty simulator.'
+            }
+        ];
+
+        // Default response if no keywords match
+        const defaultResponse = "I'm not sure about that. Please try asking about tax deadlines, rates, deductions, or penalties. You can also use the TaxEase app features for more specific calculations.";
+
+        // TaxCalculator Component
+        const TaxCalculator = () => {
+            const [income, setIncome] = React.useState('');
+            const [category, setCategory] = React.useState('general');
+            const [deductions, setDeductions] = React.useState('');
+            const [taxResult, setTaxResult] = React.useState(null);
+            
+            const calculateTax = () => {
+                // Convert input values to numbers
+                const incomeValue = parseFloat(income) || 0;
+                const deductionsValue = parseFloat(deductions) || 0;
+                
+                // Calculate taxable income
+                const taxableIncome = Math.max(0, incomeValue - deductionsValue);
+                
+                // Get the appropriate tax slab based on category
+                const slab = TAX_SLABS[category];
+                
+                // Calculate tax based on slabs
+                let remainingIncome = taxableIncome;
+                let totalTax = 0;
+                const breakdown = [];
+                
+                for (let i = 0; i < slab.length; i++) {
+                    const { min, max, rate } = slab[i];
+                    
+                    if (remainingIncome <= 0) break;
+                    
+                    const taxableAmountInSlab = Math.min(remainingIncome, max - min);
+                    if (taxableAmountInSlab <= 0) continue;
+                    
+                    const taxInSlab = taxableAmountInSlab * rate;
+                    totalTax += taxInSlab;
+                    
+                    breakdown.push({
+                        range: `रु ${min.toLocaleString()} - ${max === Infinity ? '∞' : max.toLocaleString()}`,
+                        rate: `${(rate * 100)}%`,
+                        amount: taxInSlab
+                    });
+                    
+                    remainingIncome -= taxableAmountInSlab;
+                }
+                
+                setTaxResult({
+                    taxableIncome,
+                    totalTax,
+                    breakdown
+                });
+            };
+            
+            return (
+                <div className="calculator-container">
+                    <h2>Smart Tax Calculator</h2>
+                    <p>Calculate your income tax liability based on Nepali tax slabs</p>
+                    
+                    <div className="form-group">
+                        <label htmlFor="income">Annual Income (NPR)</label>
+                        <input
+                            type="number"
+                            id="income"
+                            value={income}
+                            onChange={(e) => setIncome(e.target.value)}
+                            placeholder="Enter your annual income"
+                        />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label htmlFor="category">Tax Payer Category</label>
+                        <select
+                            id="category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            <option value="general">General Individual</option>
+                            <option value="women">Women</option>
+                            <option value="senior">Senior Citizen</option>
+                        </select>
+                    </div>
+                    
+                    <div className="form-group">
+                        <label htmlFor="deductions">Deductions (PF, Insurance, etc.)</label>
+                        <input
+                            type="number"
+                            id="deductions"
+                            value={deductions}
+                            onChange={(e) => setDeductions(e.target.value)}
+                            placeholder="Enter total deductions"
+                        />
+                    </div>
+                    
+                    <button className="btn" onClick={calculateTax}>
+                        <i className="fas fa-calculator"></i>
+                        Calculate Tax
+                    </button>
+                    
+                    <div className="disclaimer">
+                        <i className="fas fa-info-circle"></i>
+                        Note: This is a simplified calculation. Actual tax may vary based on specific circumstances.
+                    </div>
+                </div>
+            );
+        };
+
+        // TaxResult Component
+        const TaxResult = ({ taxResult }) => {
+            if (!taxResult) {
+                return (
+                    <div className="result-container">
+                        <h2>Your Tax Results</h2>
+                        <div className="result-box">
+                            <h3 className="result-title">
+                                <i className="fas fa-clock"></i>
+                                Results Will Appear Here
+                            </h3>
+                            <p>Enter your income details and click "Calculate Tax" to see your tax liability.</p>
+                        </div>
+                        
+                        <div className="features">
+                            <div className="feature">
+                                <div className="feature-icon">
+                                    <i className="fas fa-camera"></i>
+                                </div>
+                                <h3 className="feature-title">OCR Receipt Scanner</h3>
+                                <p>Scan bills and automatically track expenses</p>
+                            </div>
+                            
+                            <div className="feature">
+                                <div className="feature-icon">
+                                    <i className="fas fa-robot"></i>
+                                </div>
+                                <h3 className="feature-title">AI Chat Assistant</h3>
+                                <p>Get answers to your tax questions in Nepali/English</p>
+                            </div>
+                            
+                            <div className="feature">
+                                <div className="feature-icon">
+                                    <i className="fas fa-bell"></i>
+                                </div>
+                                <h3 className="feature-title">Smart Reminders</h3>
+                                <p>Never miss a deadline with personalized alerts</p>
+                            </div>
+                            
+                            <div className="feature">
+                                <div className="feature-icon">
+                                    <i className="fas fa-file-pdf"></i>
+                                </div>
+                                <h3 className="feature-title">PDF Reports</h3>
+                                <p>Generate professional reports for filing</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            
+            return (
+                <div className="result-container">
+                    <h2>Your Tax Results</h2>
+                    
+                    <div className="result-box">
+                        <h3 className="result-title">
+                            <i className="fas fa-file-invoice"></i>
+                            Tax Summary
+                        </h3>
+                        <div className="tax-amount">
+                            रु {taxResult.totalTax.toLocaleString()}
+                        </div>
+                        <p>Taxable Income: रु {taxResult.taxableIncome.toLocaleString()}</p>
+                    </div>
+                    
+                    <div className="result-box">
+                        <h3 className="result-title">
+                            <i className="fas fa-list-alt"></i>
+                            Tax Breakdown
+                        </h3>
+                        <div className="breakdown">
+                            {taxResult.breakdown.map((item, index) => (
+                                <div key={index} className="breakdown-item">
+                                    <span>{item.range} ({item.rate})</span>
+                                    <span>रु {item.amount.toLocaleString()}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Chatbot Component
+        const Chatbot = () => {
+            const [isOpen, setIsOpen] = React.useState(false);
+            const [messages, setMessages] = React.useState([
+                {
+                    text: "Hello! I'm TaxEase Assistant. I can help answer your questions about taxes in Nepal. What would you like to know?",
+                    sender: 'bot'
+                }
+            ]);
+            const [inputValue, setInputValue] = React.useState('');
+            const [isTyping, setIsTyping] = React.useState(false);
+            
+            // Suggested questions for the user
+            const suggestedQuestions = [
+                "What is the tax filing deadline?",
+                "How can I reduce my tax?",
+                "What are the tax slabs?",
+                "What documents do I need to file?"
+            ];
+            
+            // Function to find the best response based on user input
+            const findResponse = (userInput) => {
+                const input = userInput.toLowerCase();
+                
+                // Check for matching keywords
+                for (const item of knowledgeBase) {
+                    for (const keyword of item.keywords) {
+                        if (input.includes(keyword)) {
+                            return item.response;
+                        }
+                    }
+                }
+                
+                return defaultResponse;
+            };
+            
+            // Function to handle sending a message
+            const handleSendMessage = () => {
+                if (inputValue.trim() === '') return;
+                
+                // Add user message to chat
+                const newMessages = [...messages, { text: inputValue, sender: 'user' }];
+                setMessages(newMessages);
+                setInputValue('');
+                setIsTyping(true);
+                
+                // Simulate bot thinking and response
+                setTimeout(() => {
+                    const response = findResponse(inputValue);
+                    setMessages([...newMessages, { text: response, sender: 'bot' }]);
+                    setIsTyping(false);
+                }, 1000);
+            };
+            
+            // Function to handle suggested question click
+            const handleSuggestedQuestion = (question) => {
+                setInputValue(question);
+                // Auto-send the suggested question
+                const newMessages = [...messages, { text: question, sender: 'user' }];
+                setMessages(newMessages);
+                setIsTyping(true);
+                
+                // Simulate bot thinking and response
+                setTimeout(() => {
+                    const response = findResponse(question);
+                    setMessages([...newMessages, { text: response, sender: 'bot' }]);
+                    setIsTyping(false);
+                }, 1000);
+            };
+            
+            // Handle Enter key press
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter') {
+                    handleSendMessage();
+                }
+            };
+            
+            // Auto-scroll to bottom when new messages are added
+            React.useEffect(() => {
+                if (isOpen) {
+                    const messagesContainer = document.querySelector('.chatbot-messages');
+                    if (messagesContainer) {
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+                }
+            }, [messages, isOpen]);
+            
+            return (
+                <div className="chatbot-container">
+                    <div className="chatbot-header" onClick={() => setIsOpen(!isOpen)}>
+                        <div className="chatbot-title">
+                            <i className="fas fa-robot chatbot-icon"></i>
+                            <h3>Tax Assistant</h3>
+                        </div>
+                        <button className="chatbot-toggle">
+                            <i className={`fas fa-${isOpen ? 'times' : 'comment'}`}></i>
+                        </button>
+                    </div>
+                    
+                    <div className={`chatbot-body ${isOpen ? 'open' : ''}`}>
+                        <div className="chatbot-messages">
+                            {messages.map((message, index) => (
+                                <div key={index} className={`message ${message.sender === 'bot' ? 'bot-message' : 'user-message'}`}>
+                                    <div className="message-content">
+                                        {message.text}
+                                    </div>
+                                </div>
+                            ))}
+                            
+                            {isTyping && (
+                                <div className="message bot-message">
+                                    <div className="message-content">
+                                        <div className="typing-indicator">
+                                            <div className="typing-dot"></div>
+                                            <div className="typing-dot"></div>
+                                            <div className="typing-dot"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="suggested-questions">
+                            <h3>Suggested Questions:</h3>
+                            <div className="question-chips">
+                                {suggestedQuestions.map((question, index) => (
+                                    <div 
+                                        key={index} 
+                                        className="question-chip"
+                                        onClick={() => handleSuggestedQuestion(question)}
+                                    >
+                                        {question}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div className="chatbot-input">
+                            <input
+                                type="text"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                                placeholder="Ask about taxes in Nepal..."
+                            />
+                            <button onClick={handleSendMessage}>
+                                <i className="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // App Component
+        const App = () => {
+            const [taxResult, setTaxResult] = React.useState(null);
+            
+            return (
+                <div className="container">
+                    <header>
+                        <div className="logo">
+                            <i className="fas fa-file-invoice-dollar logo-icon"></i>
+                            <h1>TaxEase Nepal</h1>
+                        </div>
+                        <p className="tagline">AI-Powered Smart Tax Compilation for Everyone</p>
+                    </header>
+                    
+                    <div className="app-container">
+                        <TaxCalculator />
+                        <TaxResult taxResult={taxResult} />
+                    </div>
+                    
+                    <Chatbot />
+                    
+                    <footer>
+                        <p>TaxEase Nepal - Making Tax Compliance Simple and Stress-Free</p>
+                        <p>© 2023 TaxEase Nepal. For demonstration purposes only.</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
